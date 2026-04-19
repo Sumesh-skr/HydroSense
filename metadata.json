@@ -1,0 +1,8 @@
+{
+  "name": "HydroSense",
+  "description": "A comprehensive hydroponic management system with a landing page, building guides, plant data, and a real-time mobile dashboard for tracking system parameters.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}

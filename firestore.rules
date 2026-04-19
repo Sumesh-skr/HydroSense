@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidDevice(data) {
+      return data.plantType is string && data.plantType.size() <= 100 &&
+             data.ph is number &&
+             data.tds is number &&
+             data.temp is number &&
+             data.humidity is number &&
+             data.waterTemp is number &&
+             data.waterLevel is number &&
+             data.waterPump is bool &&
+             data.airPump is bool &&
+             data.growLight is bool &&
+             data.exhaust is bool &&
+             data.light is number;
+    }
+
+    // Devices collection
+    match /devices/{deviceId} {
+      // Anyone with a valid device ID can read the status
+      allow get: if isValidId(deviceId);
+      
+      // Updates usually come from the device itself
+      // In a real app, this would be authenticated via a device secret or specific user
+      // For this prototype, we'll allow public write if the data is valid (high risk, but fits the "Code" entry demo)
+      allow write: if isValidId(deviceId) && isValidDevice(request.resource.data);
+
+      match /history/{historyId} {
+        allow read: if isValidId(deviceId);
+        allow create: if isValidId(deviceId) && request.resource.data.timestamp == request.time;
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "entities": {
+    "Device": {
+      "title": "Hydroponic Device",
+      "description": "Real-time data from a HydroSense hydroponic system.",
+      "type": "object",
+      "properties": {
+        "plantType": { "type": "string", "description": "Type of plant currently being grown" },
+        "ph": { "type": "number", "description": "pH level of the nutrient solution" },
+        "tds": { "type": "number", "description": "Total Dissolved Solids in ppm" },
+        "temp": { "type": "number", "description": "Air temperature in Celsius" },
+        "humidity": { "type": "number", "description": "Air humidity in percentage" },
+        "waterTemp": { "type": "number", "description": "Water temperature in Celsius" },
+        "waterLevel": { "type": "number", "description": "Water level percentage" },
+        "waterPump": { "type": "boolean", "description": "Status of the water pump" },
+        "airPump": { "type": "boolean", "description": "Status of the air pump" },
+        "growLight": { "type": "boolean", "description": "Status of the grow light" },
+        "exhaust": { "type": "boolean", "description": "Status of the exhaust fan" },
+        "light": { "type": "number", "description": "Ambient light intensity percentage" },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      },
+      "required": ["plantType", "ph", "tds", "temp", "humidity", "waterTemp", "waterLevel"]
+    },
+    "HistoryPoint": {
+      "title": "History Data Point",
+      "description": "Historical sensor data for trending.",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "ph": { "type": "number" },
+        "tds": { "type": "number" },
+        "temp": { "type": "number" },
+        "humidity": { "type": "number" },
+        "waterTemp": { "type": "number" },
+        "waterLevel": { "type": "number" },
+        "light": { "type": "number" }
+      }
+    }
+  },
+  "firestore": {
+    "/devices/{deviceId}": {
+      "schema": "Device",
+      "description": "Main device status"
+    },
+    "/devices/{deviceId}/history/{historyId}": {
+      "schema": "HistoryPoint",
+      "description": "Historical snapshots (20 points)"
+    }
+  }
+}
