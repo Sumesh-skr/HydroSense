@@ -7,7 +7,7 @@ import {
   ShieldOff, Monitor, Database, Server, X
 } from 'lucide-react';
 import { Tooltip, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { subscribeToDevice, subscribeToHistory, updateDeviceActuator } from '../services/firebase';
+import { subscribeToDevice, subscribeToHistory } from '../services/firebase';
 import React, { memo } from 'react';
 
 interface SensorData {
@@ -66,19 +66,6 @@ export default function DashboardDetail() {
     const mm = str.substring(2, 4);
     const ss = str.substring(4, 6);
     return `${hh}:${mm}:${ss}`;
-  };
-
-  const handleToggle = async (actuatorKey: string, currentStatus: boolean) => {
-    if (!deviceId) return;
-    
-    // Convert boolean back to RTDB string format "0"/"1"
-    const nextStatus = currentStatus ? "0" : "1";
-    
-    try {
-      await updateDeviceActuator(deviceId, actuatorKey, nextStatus);
-    } catch (error) {
-      console.error("Failed to toggle actuator:", error);
-    }
   };
 
   // Process history for charts to handle string-based numbers and boolean statuses
@@ -473,12 +460,10 @@ export default function DashboardDetail() {
                   <div key={i} className="bg-brand-surface p-4 rounded-xl border border-brand-border relative overflow-hidden group">
                     <div className="flex justify-between items-start mb-2">
                        <p className="text-[10px] font-bold text-brand-text-dim uppercase tracking-widest">{control.label}</p>
-                       <button 
-                         onClick={() => handleToggle(control.key, control.status)}
-                         className={`w-7 h-3.5 rounded-full relative transition-all ${control.status ? 'bg-brand-accent' : 'bg-brand-border'} hover:ring-2 hover:ring-brand-accent/20`}
-                       >
-                         <div className={`absolute top-0.5 w-2.5 h-2.5 bg-white rounded-full shadow-sm transition-all ${control.status ? 'right-0.5' : 'left-0.5'}`}></div>
-                       </button>
+                       <div className="flex items-center gap-1.5 px-2 py-0.5 bg-brand-bg rounded-md border border-brand-border/50">
+                         <div className={`w-1.5 h-1.5 rounded-full ${control.status ? 'bg-brand-accent animate-pulse shadow-[0_0_8px_var(--color-brand-accent)]' : 'bg-brand-text-dim/30'}`}></div>
+                         <span className="text-[8px] font-bold text-brand-text-dim">MONITOR</span>
+                       </div>
                     </div>
                     <div className="flex items-baseline gap-1.5">
                       <span className={`text-lg font-bold font-mono tracking-tighter ${control.status ? 'text-brand-accent' : 'text-brand-text-dim'}`}>
